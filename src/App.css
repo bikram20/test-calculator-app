@@ -30,6 +30,14 @@ body {
   max-width: 320px;
 }
 
+.calculator-title {
+  color: #fff;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
 .calculator-display {
   background: #444;
   color: #fff;

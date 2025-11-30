@@ -6,6 +6,10 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 8080,
-    strictPort: true
+    strictPort: true,
+    hmr: {
+      clientPort: 443
+    },
+    allowedHosts: ['calculator-dev-6kjsh.ondigitalocean.app']
   }
 })

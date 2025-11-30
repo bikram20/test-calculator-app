@@ -77,6 +77,7 @@ function App() {
 
   return (
     <div className="calculator">
+      <h1 className="calculator-title">Advanced Calculator</h1>
       <div className="calculator-display">{display}</div>
       <div className="calculator-keypad">
         <div className="input-keys">

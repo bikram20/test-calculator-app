@@ -1,0 +1,78 @@
+name: calculator-dev
+region: nyc
+
+services:
+  - name: calculator-service
+    # Points to the dev template repo, NOT the calculator repo
+    dockerfile_path: /Dockerfile
+
+    github:
+      repo: bikram20/appdev-template
+      branch: main
+      deploy_on_push: false  # CRITICAL: Disable auto-deploy
+
+    instance_count: 1
+    instance_size_slug: basic-xxs
+
+    # Internal port for health check
+    internal_ports:
+      - 9090
+
+    # HTTP port for your application traffic
+    http_port: 8080
+
+    # Health check uses built-in dev health server
+    health_check:
+      http_path: /dev_health
+      port: 9090
+      initial_delay_seconds: 30
+      period_seconds: 10
+      timeout_seconds: 5
+      success_threshold: 1
+      failure_threshold: 5
+
+    # Environment variables (build-time and runtime)
+    envs:
+      # Build arguments - only enable Node.js
+      - key: INSTALL_NODE
+        value: "true"
+        scope: RUN_AND_BUILD_TIME
+      - key: INSTALL_PYTHON
+        value: "false"
+        scope: RUN_AND_BUILD_TIME
+      - key: INSTALL_GOLANG
+        value: "false"
+        scope: RUN_AND_BUILD_TIME
+      - key: INSTALL_RUST
+        value: "false"
+        scope: RUN_AND_BUILD_TIME
+      - key: INSTALL_POSTGRES
+        value: "false"
+        scope: RUN_AND_BUILD_TIME
+      - key: INSTALL_MONGODB
+        value: "false"
+        scope: RUN_AND_BUILD_TIME
+      - key: INSTALL_MYSQL
+        value: "false"
+        scope: RUN_AND_BUILD_TIME
+
+      # Runtime configuration
+      - key: GITHUB_REPO_URL
+        value: "https://github.com/bikram20/test-calculator-app.git"
+        scope: RUN_AND_BUILD_TIME
+
+      - key: RUN_COMMAND
+        value: "bash dev_startup.sh"
+        scope: RUN_AND_BUILD_TIME
+
+      - key: WORKSPACE_PATH
+        value: "/workspaces/app"
+        scope: RUN_AND_BUILD_TIME
+
+      - key: GITHUB_SYNC_INTERVAL
+        value: "60"
+        scope: RUN_AND_BUILD_TIME
+
+      - key: ENABLE_DEV_HEALTH
+        value: "true"
+        scope: RUN_AND_BUILD_TIME
