@@ -2,39 +2,36 @@
 set -e
 
 echo "==================================="
-echo "Calculator App - Development Mode"
+echo "Vite/React - Resilient Dev Mode"
 echo "==================================="
 echo ""
 
 cd /workspaces/app
 
-echo "Installing dependencies..."
-npm install
+# --- 1. Ensure we have the right tools ---
+# We use nodemon to manage the restart lifecycle. 
+# Installing it globally in the container ensures it's available without polluting package.json
+if ! command -v nodemon &> /dev/null; then
+    echo "📦 Installing process manager (nodemon)..."
+    npm install -g nodemon
+fi
+
+# --- 2. Define the execution logic ---
+# This command runs EVERY time nodemon triggers (start or restart).
+# It ensures dependencies are always in sync before the server creates its locks.
+START_CMD="npm install && npm run dev"
 
 echo ""
-echo "Starting package.json watcher in background..."
-
-# Watch for package.json changes and auto-install dependencies
-{
-    LAST_HASH=$(md5sum package.json 2>/dev/null | cut -d' ' -f1 || echo "")
-    while true; do
-        sleep 10
-        CURRENT_HASH=$(md5sum package.json 2>/dev/null | cut -d' ' -f1 || echo "")
-        if [ "$CURRENT_HASH" != "$LAST_HASH" ] && [ -n "$CURRENT_HASH" ]; then
-            echo ""
-            echo "[DEPENDENCY CHANGE DETECTED]"
-            echo "package.json has changed. Installing dependencies..."
-            npm install
-            echo "Dependencies updated. Vite HMR will reload automatically."
-            echo ""
-            LAST_HASH=$CURRENT_HASH
-        fi
-    done
-} &
-
-echo ""
-echo "Starting Vite dev server..."
-echo "App will be available on port 8080"
+echo "🚀 Starting Supervisor..."
+echo "   - Watching: package.json"
+echo "   - Action: Stop Server -> npm install -> Start Server"
 echo ""
 
-npm run dev -- --host 0.0.0.0 --port 8080
+# --- 3. Run the Supervisor ---
+# --watch package.json: Only look at this file
+# --ext json: Only react to json changes
+# --exec: The command to run. Nodemon handles the SIGTERM to Vite automatically.
+nodemon \
+  --watch package.json \
+  --ext json \
+  --exec "$START_CMD"
