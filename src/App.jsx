@@ -1,10 +1,19 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { format } from 'date-fns'
 
 function App() {
+  const [currentTime, setCurrentTime] = useState(new Date())
   const [display, setDisplay] = useState('0')
   const [previousValue, setPreviousValue] = useState(null)
   const [operation, setOperation] = useState(null)
   const [waitingForOperand, setWaitingForOperand] = useState(false)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+    return () => clearInterval(timer)
+  }, [])
 
   const inputDigit = (digit) => {
     if (waitingForOperand) {
@@ -78,6 +87,7 @@ function App() {
   return (
     <div className="calculator">
       <h1 className="calculator-title">Advanced Calculator</h1>
+      <div className="calculator-clock">{format(currentTime, 'PPpp')}</div>
       <div className="calculator-display">{display}</div>
       <div className="calculator-keypad">
         <div className="input-keys">
