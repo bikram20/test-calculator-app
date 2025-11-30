@@ -70,7 +70,7 @@ services:
         scope: RUN_AND_BUILD_TIME
 
       - key: GITHUB_SYNC_INTERVAL
-        value: "60"
+        value: "30"
         scope: RUN_AND_BUILD_TIME
 
       - key: ENABLE_DEV_HEALTH
